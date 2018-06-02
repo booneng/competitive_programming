@@ -18,13 +18,13 @@ int main() {
     vector<int> full;
     for (int j = 0; j < n; j++) {
       if (a[j] >= x) {
-	subs.push_back(a[j]);
+	subs.emplace_back(a[j]);
       }
       else {
 	if (subs.size() >= k) {
 	  sort(subs.begin(), subs.end());
 	  for (int l = 0; l < subs.size() - k + 1; l++) {
-	    full.push_back(subs[l]);
+	    full.emplace_back(subs[l]);
 	  }
 	}
 	subs.clear();
@@ -33,7 +33,7 @@ int main() {
     if (subs.size() >= k) {
       sort(subs.begin(), subs.end());
       for (int l = 0; l < subs.size() - k + 1; l++) {
-	full.push_back(subs[l]);
+	full.emplace_back(subs[l]);
       }
     }
     sort(full.begin(), full.end());
