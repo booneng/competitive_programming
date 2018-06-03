@@ -1,36 +1,22 @@
 #include <iostream>
-#include <set>
-#include <string>
+#include <cmath>
+#include <algorithm>
+
+#define ll long long int
 
 using namespace std;
 
 int main() {
-  int n, m;
-  cin >> n >> m;
-  string s;
-  cin >> s;
-  int unique_ij[n][n + 1];
-  for (int i = 0; i < n; i++) {
-    for (int j = i + 1; j <= n; j++) {
-      string subs = s.substr(i, j - i);
-      set<char> u;
-      for (char c : subs) {
-	u.insert(c);
-      }
-      unique_ij[i][j] = u.size();
-    }
+  ll n, h;
+  cin >> n >> h;
+  ll k = (-1.0 + sqrt(1 + 8 * n)) / 2;
+  ll used = k * k - (k - 1) * k / 2;
+  if (k > h) {
+    k = sqrt(n + (h * h - h) / 2);
+    used = k * k - (h - 1) * h / 2;
   }
-
-  for (int i = 0; i < m; i++) {
-    int x, y, len;
-    cin >> x >> y >> len;
-    x--;
-    y--;
-    if (unique_ij[x][x + len] == unique_ij[y][y + len]) {
-      cout << "YES" << endl;
-    }
-    else {
-      cout << "NO" << endl;
-    }
-  }
+  ll tmp = n - used;
+  ll add = tmp % k ? tmp / k + 1 : tmp / k;
+  add = max(add, 0LL);
+  cout << 2 * k - min(h, k) + add;
 }
