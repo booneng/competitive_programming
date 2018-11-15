@@ -9,25 +9,13 @@ int main() {
     cout << n / 2;
     return 0;
   }
-  long long MAX = 100001;
-  vector<bool> primes(MAX, true);
+  int end = sqrt(n);
   long long smallest_prime = 0;
-  for (long long int i = 2; i < MAX; i++) {
-    if (!primes[i]) continue;
+  for (int i = 2; i <= end; i++) {
     if (n % i == 0) {
-      smallest_prime = i;
-      break;
-    }
-    long long int m = i * i;
-    while (m < MAX) {
-      primes[m] = false;
-      m += i;
+      cout << ((n - i) / 2 + 1);
+      return 0;
     }
   }
-  if (smallest_prime == 0) {
-    cout << 1;
-  }
-  else {
-    cout << ((n - smallest_prime) / 2 + 1);
-  }
+  cout << 1;
 }
