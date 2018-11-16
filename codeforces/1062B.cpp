@@ -1,40 +1,44 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-unordered_set<long long> visited;
-
-pair<int, int> findSteps(long long n) {
-  visited.insert(n);
-  int steps = 0;
-  long long sq = sqrt(n);
-  while (sq * sq == n) {
-    steps++;
-    n = sq;
-    sq = sqrt(n);
-  }
-  long long smallest = n;
-  int smallest_steps = steps;
-  for (long long i = 2; i < n; i++) {
-    long long mul = i * n;
-    sq = sqrt(mul);
-    if (sq * sq == mul) {
-      if (visited.find(mul) != visited.end()) continue;
-      auto p = findSteps(mul);
-      if (p.first < smallest) {
-	smallest = p.first;
-	smallest_steps = steps + p.second + 1;
-      }
-      else if (p.first == smallest) {
-	smallest_steps = min(smallest_steps, steps + p.second + 1);
-      }
-    }
-  }
-  return {smallest, smallest_steps};
-}
 
 int main() {
   long long n;
   cin >> n;
-  auto p = findSteps(n);
-  cout << p.first << ' ' << p.second;
+
+  if (n == 1) {
+    cout << 1 << ' ' << 0;
+  }
+  else {
+    int max_power = -1;
+    bool two_powers = false;
+    vector<int> primes;
+    for (int i = 2; i * i <= n; i++) {
+      if (n % i == 0) {
+	int power = 0;
+	while (n % i == 0) {
+	  power++;
+	  n /= i;
+	}
+	if (max_power > 0 && power != max_power) {
+	  two_powers = true;
+	}
+	max_power = max(max_power, power);
+	primes.push_back(i);
+      }
+    }
+    if (n > 1) {
+      if (max_power > 1) two_powers = true;
+      else max_power = 1;
+    }
+    for (int i : primes) n *= i;
+    int steps = 0;
+    int i = 1;
+    while (i < max_power) {
+      i *= 2;
+      steps++;
+    }
+    if (i > max_power || two_powers) steps++;
+    cout << n << ' ' << steps;
+  }
 }
