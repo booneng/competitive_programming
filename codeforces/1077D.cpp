@@ -2,6 +2,22 @@
 
 using namespace std;
 
+bool check(const int times, const int k, const unordered_map<int, int>& cnts) {
+  vector<int> t;
+  for (auto it = cnts.begin(); it != cnts.end(); it++) {
+    if (it->second >= times) {
+      int rep = it->second / times;
+      for (int j = 0; j < rep; j++) {
+	t.push_back(it->first);
+	if (t.size() == k) break;
+      }
+    }
+    if (t.size() == k) break;
+  }
+  return t.size() == k;
+}
+
+
 int main() {
   int n, k;
   cin >> n >> k;
@@ -12,27 +28,23 @@ int main() {
     cnts[s[i]]++;
   }
 
-  map<int, int> cntcnts;
-  for (auto it = cnts.begin(); it != cnts.end(); it++) {
-    cntcnts[it->second]++;
+  int left = 1;
+  int right = n / k;
+  while (left <= right) {
+    int mid = (left + right) / 2;
+    if (check(mid, k, cnts)) {
+      left = mid + 1;
+    }
+    else {
+      right = mid - 1;
+    }
   }
-
-  int bound = 0;
-  int maxtimes = 0;
-  for (auto it = cntcnts.begin(); it != cntcnts.end(); it++) {
-    int erasable = min(it->first, n / k);
-
-    if (erasable < maxtimes) break;
-    maxtimes = erasable;
-    n -= it->second * it->first;
-    bound = it->first;
-  }
-
+  
   vector<int> t;
   for (auto it = cnts.begin(); it != cnts.end(); it++) {
-    if (it->second >= bound) {
-      int times = it->second / maxtimes;
-      for (int j = 0; j < times; j++) {
+    if (it->second >= right) {
+      int rep = it->second / right;
+      for (int j = 0; j < rep; j++) {
 	t.push_back(it->first);
 	if (t.size() == k) break;
       }
