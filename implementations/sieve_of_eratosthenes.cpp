@@ -7,9 +7,9 @@ int main() {
   int n;
   cin >> n;
   vector<bool> isprime(n, true);
-  for (int i = 2; i < n; i++) {
+  for (int i = 2; i <= sqrt(n); i++) {
     if (isprime[i]) {
-      for (int j = 2 * i; j < n; j += i) {
+      for (int j = i * i; j <= sqrt(n); j += i) {
 	isprime[j] = false;
       }
     }

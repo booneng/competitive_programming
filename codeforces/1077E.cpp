@@ -20,17 +20,17 @@ int main() {
 
   sort(cnts.begin(), cnts.end());
   int ans = 0;
-  for (int i = 1; i <= cnts[cnts.size() - 1]; i++) {
-    int sum = 0;
-    int mul = i;
-    auto it = lower_bound(cnts.begin(), cnts.end(), mul);
-    while (it != cnts.end()) {
-      sum += mul;
-      mul *= 2;
-      it = lower_bound(it + 1, cnts.end(), mul);
+  for (int i = 1; i <= cnts.back(); i++) {
+    int pos = cnts.size() - 1;
+    int cur = i;
+    int res = cur;
+    while (pos > 0 && cur % 2 == 0) {
+      cur /= 2;
+      pos--;
+      if (cnts[pos] < cur) break;
+      res += cur;
     }
-    ans = max(ans, sum);
-    
+    ans = max(ans, res);
   }
   cout << ans;
 }
