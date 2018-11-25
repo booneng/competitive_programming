@@ -1,1 +1,1 @@
-just random programming
+competitive programming practice
