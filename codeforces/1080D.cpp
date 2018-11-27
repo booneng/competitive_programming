@@ -17,7 +17,7 @@ int main() {
   while (t--) {
     long long n, k;
     cin >> n >> k;
-    if (k == 3 || (n < 31 && k > sumFourPow[n])) {
+    if ((n == 2 && k == 3) || (n < 31 && k > sumFourPow[n])) {
       cout << "NO" << endl;
       continue;
     }
