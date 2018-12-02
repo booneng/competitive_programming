@@ -16,21 +16,23 @@ int main() {
     return 0;
   }
 
-  vector<vector<long long>> dp(n, vector<long long>(x, numeric_limits<long long>::min()));
+  vector<long long> dp(n, numeric_limits<long long>::min());
   for (int i = 0; i < k; i++) {
-    dp[i][0] = a[i];
+    dp[i] = a[i];
   }
 
-  for (int i = 0; i < n; i++) {
-    for (int j = 1; j < x; j++) {
+  for (int j = 1; j < x; j++) {
+    vector<long long> dp2 = dp;
+    for (int i = 0; i < n; i++) {
       for (int p = max(i - k, 0); p < i; p++) {
-	dp[i][j] = max(dp[i][j], dp[p][j - 1] + a[i]);
+	dp2[i] = max(dp2[i], dp[p] + a[i]);
       }
     }
+    dp = dp2;
   }
   long long ans = -1;
   for (int i = n - k; i < n; i++) {
-    ans = max(ans, dp[i][x - 1]);
+    ans = max(ans, dp[i]);
   }
   cout << ans;
 }
