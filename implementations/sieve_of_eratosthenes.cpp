@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <bits/stdc++.h>
+
 
 using namespace std;
 
@@ -14,7 +16,10 @@ int main() {
       }
     }
   }
+  int m = 0;
   for (int i = 2; i < n; i++) {
-    cout << i << ' ' << isprime[i] << endl;
+    // cout << i << ' ' << isprime[i] << endl;
+    if (isprime[i]) m = i;
   }
+  cout << m;
 }
