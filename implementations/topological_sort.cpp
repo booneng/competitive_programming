@@ -8,6 +8,7 @@ vector<int> order;
 vector<bool> visited;
 vector<int> ccs;
 
+// sorting by post order number
 void dfs(int u) {
   visited[u] = true;
   for (int v : adj[u]) {
@@ -16,6 +17,8 @@ void dfs(int u) {
   order.push_back(u);
 }
 
+
+// label connected component
 void dfs2(int u, const int cc) {
   visited[u] = true;
   ccs[u] = cc;
