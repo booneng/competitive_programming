@@ -56,12 +56,6 @@ bool check() {
 int main() {
   string types;
   cin >> types;
-  bool no_c = true;
-  bool no_v = true;
-  for (char c : types) {
-    if (c == 'V') no_v = false;
-    else no_c = false;
-  }
   int l = (int)types.size();
 
   int m;
@@ -159,14 +153,14 @@ int main() {
             }
           }
           if (assignments[k] == 1) {
-            if (no_v) {
+            if (first_v == l) {
               cout << -1;
               return 0;
             }
             s[k] = alphabet[first_v];
           }
           else if (assignments[k] == 2) {
-            if (no_c) {
+            if (first_c == l) {
               cout << -1;
               return 0;
             }
