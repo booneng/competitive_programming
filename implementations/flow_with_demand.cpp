@@ -4,12 +4,23 @@ using namespace std;
 
 class FlowGraph {
 private:
+  int n_;
   int s_;
   int t_;
-  int n_;
   vector<vector<int>> adj_;
   vector<vector<int>> edge_weights_;
+  vector<vector<int>> adj_joined_;
+  vector<vector<int>> flow_;
 
+  void set_adj_joined() {
+    adj_joined_ = vector<vector<int>>(n_);
+    for (int i = 0; i < n_; i++) {
+      for (int j : adj_[i]) {
+        adj_joined_[i].push_back(j);
+        adj_joined_[j].push_back(i);
+      }
+    }
+  }
 public:
 
   FlowGraph(int n, int s, int t, vector<vector<int>>& adj, vector<vector<int>>& edge_weights)
@@ -17,14 +28,22 @@ public:
         s_(s),
         t_(t),
         adj_(adj),
-        edge_weights_(edge_weights) {
-    for (int i = 0; i < edge_weights_.size(); i++) {
-      for (int j : edge_weights_[i]) cout << j << ' ';
-      cout << endl;
-    }
+        edge_weights_(edge_weights),
+        flow_(n, vector<int>(n)) {
+    set_adj_joined();
   }
 
-  int BFS() {
+  FlowGraph(int n, int s, int t, vector<vector<int>>& adj, vector<vector<int>>& edge_weights, vector<vector<int>>& flow)
+      : n_(n),
+        s_(s),
+        t_(t),
+        adj_(adj),
+        edge_weights_(edge_weights),
+        flow_(flow) {
+    set_adj_joined();
+  }
+
+  bool BFS() {
     vector<int> path(n_, -1);
     path[s_] = s_;
     queue<int> q;
@@ -37,14 +56,14 @@ public:
         can = true;
         break;
       }
-      for (int next : adj_[prev]) {
+      for (int next : adj_joined_[prev]) {
         if (edge_weights_[prev][next] == 0 || path[next] != -1) continue;
         path[next] = prev;
         q.push(next);
       }
     }
 
-    if (!can) return 0;
+    if (!can) return false;
     int cur = t_;
     int min_capacity = INT_MAX;
     while (cur != s_) {
@@ -57,24 +76,51 @@ public:
     // update edge_weights
     while (cur != s_) {
       int prev = path[cur];
+      flow_[prev][cur] += min_capacity;
+      flow_[cur][prev] -= min_capacity;
       edge_weights_[prev][cur] -= min_capacity;
       edge_weights_[cur][prev] += min_capacity;
       cur = prev;
     }
 
-    return min_capacity;
+    return true;
   }
 
-  int EdmondKarp() {
-    int res = 0;
-    int flow = BFS();
+  void EdmondKarp() {
+    bool flow = BFS();
     while (flow) {
-      res += flow;
       flow = BFS();
+    }
+  }
+
+  void PrintFlow() {
+    for (int i = 0; i < n_; i++) {
+      for (int j : adj_[i]) {
+        cout << i << "->" << j << ' ' << flow_[i][j] << endl;
+      }
+    }
+  }
+
+  void PrintWeights() {
+    for (int i = 0; i < n_; i++) {
+      for (int j = 0; j < n_; j++) {
+        cout << edge_weights_[i][j] << ' ';
+      }
+      cout << endl;
+    }
+  }
+
+  vector<vector<int>> get_flow() {
+    return flow_;
+  }
+
+  int calculate_flow() {
+    int res = 0;
+    for (int i : adj_[s_]) {
+      res += flow_[s_][i];
     }
     return res;
   }
-
 };
 
 FlowGraph CreateFlowGraph(
@@ -90,13 +136,11 @@ FlowGraph CreateFlowGraph(
   int tp = n + 1;
   vector<vector<int>> fadj(np);
   vector<vector<int>> weights(np, vector<int>(np, 0));
-  int demand_sum = 0;
   for (int i = 0; i < n; i++) {
     fadj[i] = adj[i];
     for (int j : adj[i]) {
       if (capacities[i][j] > 0) {
         weights[i][j] = capacities[i][j] - demands[i][j];
-        demand_sum += demands[i][j];
       }
     }
   }
@@ -106,14 +150,10 @@ FlowGraph CreateFlowGraph(
       weights[sp][j] += demands[i][j];
     }
     fadj[sp].push_back(i);
-    fadj[i].push_back(sp);
-    fadj[tp].push_back(i);
     fadj[i].push_back(tp);
   }
   weights[t][s] = INT_MAX;
-  fadj[s].push_back(t);
   fadj[t].push_back(s);
-
 
   FlowGraph fg(np, sp, tp, fadj, weights);
   return fg;
@@ -144,7 +184,20 @@ int main() {
   adj[2].push_back(3);
   capacities[2][3] = 6;
   demands[2][3] = 2;
-  FlowGraph fg = CreateFlowGraph(n, t, s, capacities, demands, adj);
-  cout << fg.EdmondKarp();
-
+  FlowGraph fg = CreateFlowGraph(n, s, t, capacities, demands, adj);
+  fg.EdmondKarp();
+  cout << fg.calculate_flow() << endl;
+  vector<vector<int>> flow = fg.get_flow();
+  vector<vector<int>> residual_capacities(n, vector<int>(n));
+  for (int i = 0; i < n; i++) {
+    for (int j : adj[i]) {
+      flow[i][j] += demands[i][j];
+      residual_capacities[i][j] = capacities[i][j] - flow[i][j];
+      residual_capacities[j][i] = max(0, flow[i][j] - demands[i][j]);
+    }
+  }
+  FlowGraph fg2(n, s, t, adj, residual_capacities, flow);
+  fg2.EdmondKarp();
+  cout << fg2.calculate_flow() << endl;
+  fg2.PrintFlow();
 }
