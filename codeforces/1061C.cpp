@@ -2,35 +2,42 @@
 
 using namespace std;
 
+const int MOD = 1000000007;
+
 int main() {
   cin.tie(NULL);
   ios_base::sync_with_stdio(false);
   int n;
   cin >> n;
   vector<int> a(n);
-  int amax = 1;
   for (int i = 0; i < n; i++) {
     cin >> a[i];
-    amax = max(amax, a[i]);
   }
-  vector<vector<int>> divs(amax + 1);
-  for (int i = 1; i <= amax; i++) {
-    for (int j = i; j <= amax; j+=i) {
-      divs[j].push_back(i);
-    }
-  }
-  int mod = 1000000007;
-  vector<int> dp(amax + 1, 0);
+
+  vector<int> dp(n + 1);
   dp[0] = 1;
-  int ans = 0;
   for (int i = 0; i < n; i++) {
-    for (int j : divs[a[i]]) {
-      ans = (ans + dp[j - 1]) % mod;
+    vector<int> divisors;
+    for (int j = 1; j * j <= a[i]; j++) {
+      if (a[i] % j == 0) {
+        divisors.push_back(j);
+        if (j * j != a[i]) {
+          divisors.push_back(a[i] / j);
+        }
+      }
     }
-    for (int j = divs[a[i]].size() - 1; j >= 0; j--) {
-      int k = divs[a[i]][j];
-      dp[k] = (dp[k] + dp[k - 1]) % mod;
+
+    sort(divisors.begin(), divisors.end(), greater<int>());
+
+    for (int& div : divisors) {
+      if (div > n) continue;
+      dp[div] = (dp[div] + dp[div - 1]) % MOD;
     }
+  }
+
+  int ans = 0;
+  for (int i = 1; i <= n; i++) {
+    ans = (ans + dp[i]) % MOD;
   }
   cout << ans;
 }
