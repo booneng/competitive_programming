@@ -15,14 +15,20 @@ public:
   vector<int> BellmanFord() {
     vector<int> dists(n_, INT_MAX);
     dists[source_] = 0;
-    for (int i = 0; i < n_; i++) {
-      for (int from = 0; from < n_; from++) {
-        if (dists[from] == -1) continue;
-        for (auto edge : adj_[from]) {
-          int to = edge.first;
-          int weight = edge.second;
-          if (dists[to] > (long long)dists[from] + weight) {
-            dists[to] = dists[from] + weight;
+    queue<int> q;
+    q.push(source_);
+    vector<bool> in_queue(n_, false);
+    while (!q.empty()) {
+      int cur = q.front();
+      q.pop();
+      for (auto& edge : adj_[cur]) {
+        int next = edge.first;
+        int weight = edge.second;
+        if (dists[next] > dists[cur] + weight) {
+          dists[next] = dists[cur] + weight;
+          if (!in_queue[next]) {
+            in_queue[next] = true;
+            q.push(next);
           }
         }
       }
