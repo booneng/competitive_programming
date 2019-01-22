@@ -171,36 +171,55 @@ public:
 
 
 int main() {
-  const int N = 450;
-  int x[N], y[N];
-  int n, s, t;
-  cin >> n;
-  for (int i = 1; i <= n; i++) {
-    cin >> x[i] >> y[i];
-  }
+  // const int N = 450;
+  // int x[N], y[N];
+  // int n, s, t;
+  // cin >> n;
+  // for (int i = 1; i <= n; i++) {
+  //   cin >> x[i] >> y[i];
+  // }
 
-  s = 0;
-  t = n + n + 1;
-  MinCostMaxFlow mcmf(2 * n + 2);
-  for (int i = 1; i <= n; i++) {
-    mcmf.AddEdge(s, i, 1, 0);
-    mcmf.AddEdge(n + i, t, 2, 0);
-  }
+  // s = 0;
+  // t = n + n + 1;
+  // MinCostMaxFlow mcmf(2 * n + 2);
+  // for (int i = 1; i <= n; i++) {
+  //   mcmf.AddEdge(s, i, 1, 0);
+  //   mcmf.AddEdge(n + i, t, 2, 0);
+  // }
 
-  for (int i = 1; i <= n; i++) {
-    for (int j = 1; j <= n; j++) {
-      if (y[i] < y[j]) {
-        double cost = sqrt((y[i] - y[j]) * (y[i] - y[j]) + (x[i] - x[j]) * (x[i] - x[j]));
-        mcmf.AddEdge(i, n + j, 1, cost);
-      }
+  // for (int i = 1; i <= n; i++) {
+  //   for (int j = 1; j <= n; j++) {
+  //     if (y[i] < y[j]) {
+  //       double cost = sqrt((y[i] - y[j]) * (y[i] - y[j]) + (x[i] - x[j]) * (x[i] - x[j]));
+  //       mcmf.AddEdge(i, n + j, 1, cost);
+  //     }
+  //   }
+  // }
+  // pair<int, double> ans = mcmf.MinCostFlow1(s, t);
+  // cout << fixed << setprecision(10);
+  // if (ans.first == n - 1) {
+  //   cout << ans.second;
+  // }
+  // else {
+  //   cout << -1;
+  // }
+
+  struct aggregate {
+    int foo;
+    int bar;
+
+    aggregate(int a, int b) : foo(a), bar(b){}
+
+    aggregate(const aggregate& copy) : foo(copy.foo), bar(copy.bar) {
+      cout << "Copied" << endl;
     }
-  }
-  pair<int, double> ans = mcmf.MinCostFlow1(s, t);
-  cout << fixed << setprecision(10);
-  if (ans.first == n - 1) {
-    cout << ans.second;
-  }
-  else {
-    cout << -1;
-  }
+};
+
+aggregate a(0, 1);
+aggregate b(a);
+cout << endl;
+vector<aggregate> tmp;
+tmp.push_back(a);
+cout << endl;
+tmp.emplace_back(0, 5);
 }
