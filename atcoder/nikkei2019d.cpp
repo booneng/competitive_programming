@@ -10,7 +10,6 @@ const int N = 100005;
 vector<int> adj[N];
 vector<int> r_adj[N];
 int parents[N];
-vector<int> order;
 bool visited[N];
 int number;
 int po_numbers[N];

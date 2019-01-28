@@ -8,13 +8,14 @@ using namespace std;
 const int N = 100005;
 const int M = 100005;
 
-vector<vector<int>> edges;
+vector<pair<int, int>> edges;
 int a[N];
 int parents[N];
-int weight[N];
-
+long long weight[N];
 bool included[M];
-
+bool used[M];
+int u[M], v[M], w[M];
+vector<pair<int, int>> adj[N];
 
 int find(int a) {
     if (parents[a] == a) return a;
@@ -30,6 +31,16 @@ void join(int a, int b) {
     weight[pa] += weight[pb];
 }
 
+void dfs(int i, int wi) {
+    for (auto& p : adj[i]) {
+        if (used[p.second]) continue;
+        if (w[p.second] <= wi) {
+            used[p.second] = true;
+            dfs(p.first, wi);
+        }
+    }
+}
+
 int main() {
     int n, m;
     cin >> n >> m;
@@ -39,47 +50,48 @@ int main() {
     }
 
     for (int i = 0; i < m; i++) {
-        int u, v, w;
-        cin >> u >> v >> w;
-        u--;
-        v--;
-        edges.push_back({u, v, w});
+        int ui, vi, wi;
+        cin >> ui >> vi >> wi;
+        ui--;
+        vi--;
+        edges.push_back({wi, i});
+        w[i] = wi;
+        u[i] = ui;
+        v[i] = vi;
+        adj[ui].push_back({vi, i});
+        adj[vi].push_back({ui, i});
     }
 
-    sort(edges.begin(), edges.end(), [](vector<int>& a, vector<int>& b) {
-        return a[2] > a[1];
-    });
-
+    sort(edges.begin(), edges.end());
     memset(included, false, sizeof(included));
-    int ans = m;
-    while (true) {
-        bool finished = true;
-        for (int i = 0; i < m; i++) {
-            if (included[i]) continue;
-            int u = edges[i][0];
-            int v = edges[i][1];
-            int ew = edges[i][2];
-            int pu = find(u);
-            int pv = find(v);
-            if (pu == pv) {
-                if (weight[pu] >= ew) {
-                    included[i] = true;
-                    ans--;
-                }
-            }
-            else {
-                int w1 = weight[pu];
-                int w2 = weight[pv];
-                if (w1 + w2 >= ew) {
-                    join(pu, pv);
-                    included[i] = true;
-                    ans--;
-                    finished = false;
-                }
-            }
-            
+
+    for (int i = 0; i < m; i++) {
+        int idx = edges[i].second;
+        int wi = edges[i].first;
+        int pu = find(u[idx]);
+        int pv = find(v[idx]);
+        if (pu != pv) {
+            join(pu, pv);
         }
-        if (finished) break;
+        if (weight[find(pu)] >= wi) {
+            included[idx] = true;
+        }
+    }
+
+    memset(used, false, sizeof(used));
+    for (int i = m - 1; i >= 0; i--) {
+        int idx = edges[i].second;
+        int wi = edges[i].first;
+        if (used[idx]) continue;
+        if (included[idx]) {
+            dfs(u[idx], wi);
+        }
+    }
+
+    int ans = m;
+
+    for (int i = 0; i < m; i++) {
+        if (used[i]) ans--;
     }
     cout << ans;
 }
