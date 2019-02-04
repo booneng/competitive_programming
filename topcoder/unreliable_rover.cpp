@@ -35,7 +35,7 @@ public:
 
         long long missing_area = 0;
 
-        for (int i = 0; i + 1 < (int) heights.size(); i++) {
+        for (int i = 0; i < heights.size() - 1; i++) {
             missing_area += (heights.back() - heights[i]) * (heights[i + 1] - heights[i]);
         }
 
