@@ -12,7 +12,7 @@ class TieForMax {
     double nCr(int n, int r) {
         return facs[n] / (facs[r] * facs[n - r]);
     }
-    
+
 public:
 
     double getProbability(int t, int p) {
@@ -24,6 +24,7 @@ public:
         // dp[i][j][k] = number of ways to distribute i tokens into j piles s.t. each pile has at most k tokens
         vector<vector<vector<double>>> dp(t + 1, vector<vector<double>>(p + 1, vector<double>(t + 1, 0.0)));
 
+        // only one way to distribute 0 tokens
         for (int i = 0; i <= p; i++) {
             for (int j = 0; j <= t; j++) {
                 dp[0][i][j] = 1;
@@ -31,6 +32,7 @@ public:
         }
 
         for (int i = 1; i <= t; i++) {
+            // note: if there are 0 piles and more than 0 tokens then there are 0 ways to distribute
             for (int j = 1; j <= p; j++) {
                 for (int k = 0; k <= t; k++) {
                     for (int l = 0; l <= min(i, k); l++) {
