@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-// also see 1077F2 for lazy propagation segment tree
+// also see 52C for lazy propagation segment tree
 class SegmentTree {
 private:
   int n;

@@ -8,15 +8,11 @@ using namespace std;
 int main() {
     int n;
     cin >> n;
-    vector<int> c(n);
-    for (int i = 0; i < n; i++) {
-        cin >> c[i];
-    }
-
     vector<int> a;
-    a.push_back(c[0]);
-    for (int i = 1; i < n; i++) {
-        if (c[i] != a.back()) a.push_back(c[i]);
+    for (int i = 0; i < n; i++) {
+        int c;
+        cin >> c;
+        if (i == 0 || c != a.back()) a.push_back(c);
     }
 
     n = a.size();

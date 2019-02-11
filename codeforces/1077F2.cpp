@@ -59,7 +59,7 @@ int main() {
     for (int i = j; i < n; i++) {
       long long maxP = maxQuery(max(i - k, 0), i - 1, 0, n - 1, 0, segmentTree);
       if (maxP >= 0) {
-	updates[i] = maxP + a[i];
+	      updates[i] = maxP + a[i];
       }
     }
     for (int i = 0; i < n; i++) {
