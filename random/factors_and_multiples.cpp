@@ -1,11 +1,10 @@
-/* this algorithm is for maximum bipartite matching
-in O(V^(1/2) * E) complexity which is better than
-converting the problem to maximum flow and solve using
-ford-fulkerson */
+// maximum bipartite matching problem
+// http://lightoj.com/volume_showproblem.php?problem=1149
+
 #include <iostream>
 #include <vector>
-#include <climits>
 #include <queue>
+#include <climits>
 
 using namespace std;
 
@@ -46,8 +45,6 @@ public:
         while (!q.empty()) {
             int u = q.front();
             q.pop();
-            // find alternating paths (edge with match and edge without match)
-            // vertices in left side without a match will map to 0
             for (int v : adj[u]) {
                 if (dist[match[v]] == INF) {
                     dist[match[v]] = dist[u] + 1;
@@ -90,14 +87,33 @@ public:
     }
 };
 
-int main() {
-    Matching m(4, 4);
-    m.addEdge(1, 2); 
-    m.addEdge(1, 3); 
-    m.addEdge(2, 1); 
-    m.addEdge(3, 2); 
-    m.addEdge(4, 2); 
-    m.addEdge(4, 4);
 
-    cout << m.hopcroftKarp() << endl;
+int main() {
+    int t;
+    cin >> t;
+    for (int c = 1; c <= t; c++) {
+        int n;
+        cin >> n;
+        vector<int> a(n);
+        for (int i = 0; i < n; i++) {
+            cin >> a[i];
+        }
+
+        int m;
+        cin >> m;
+        vector<int> b(m);
+        for (int i = 0; i < m; i++) {
+            cin >> b[i];
+        }
+
+        Matching mat(n, m);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (b[j] % a[i] == 0) {
+                    mat.addEdge(i + 1, j + 1);
+                }
+            }
+        }
+        cout << "Case " << c << ": " << mat.hopcroftKarp() << endl;
+    }
 }
