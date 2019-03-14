@@ -20,5 +20,5 @@ int main() {
 
     cin >> n >> m >> d;
 
-
+    
 }

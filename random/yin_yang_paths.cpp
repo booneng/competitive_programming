@@ -1,3 +1,5 @@
+/* Problem link: http://usaco.org/index.php?page=viewproblem2&cpid=286 */
+
 #include <cstring>
 #include <iostream>
 #include <vector>
