@@ -22,10 +22,6 @@ struct Path {
         return pen < p.pen || (pen == p.pen && depth > p.depth);
     }
 
-    double GetX(Path& p) {
-        return (double)(depth - p.depth) / (p.pen - pen);
-    }
-
     long long GetCost(Path& p) {
         return (long long)pen * p.pen + depth + p.depth;
     }
@@ -39,6 +35,14 @@ bool blocked[MAXN];
 long long min_cost[MAXN];
 vector<Edge> adj[MAXN];
 vector<Path> paths;
+
+
+bool Check(Path &p0, Path &p1, Path &p2) {
+    long long left = (p0.depth - p1.depth) * (p2.pen - p1.pen);
+    long long right = (p1.depth - p2.depth) * (p1.pen - p0.pen);
+
+    return left >= right;
+}
 
 void CalculateSubtreeSizes(int i, int p) {
     parents[i] = p;
@@ -72,7 +76,7 @@ void GetMinCost(int centroid) {
 
     vector<Path> considered_paths;
     for (int i = paths.size() - 1; i >= 0; i--) {
-        while (considered_paths.size() > 1 && considered_paths[considered_paths.size() - 2].GetX(considered_paths.back()) >= considered_paths.back().GetX(paths[i])) {
+        while (considered_paths.size() > 1 && Check(considered_paths[considered_paths.size() - 2], considered_paths.back(), paths[i])) {
             considered_paths.pop_back();
         }
 
