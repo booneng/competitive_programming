@@ -1,5 +1,5 @@
 // this program finds the longest anagramatically equivalent substring of s1 and s2
-
+// uses bloom filters
 
 #include <bits/stdc++.h>
 
@@ -65,8 +65,8 @@ int main() {
       if (hash1 < 0) hash1 += primes[0];
       if (hash2 < 0) hash2 += primes[1];
       if (table.find({hash1, hash2}) != table.end()) {
-	ans = len;
-	break;
+        ans = len;
+        break;
       }
     }
     if (ans) break;

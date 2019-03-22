@@ -4,25 +4,20 @@ using namespace std;
 
 
 int find(int left, int right) {
-    while (left <= right) {
+    while (left + 1 < right) {
         int mid = (left + right) / 2;
 
-        cout << "? " << left << ' ' << mid;
-        fflush(stdout);
+        cout << "? " << left << ' ' << mid << endl;
+        cout.flush();
 
-        string s;
-        cin >> s;
-        if (s == "e") exit(0);
-        int ret = stoi(s);
-
-        // int ret;
-        // cin >> ret;
-
-        if (ret == left) {
-            right = mid - 1;
+        char ret;
+        cin >> ret;
+        if (ret == 'e') exit(0);
+        if (ret == 'x') {
+            right = mid;
         }
         else {
-            left = mid + 1;
+            left = mid;
         }
     }
     return left + 1;
@@ -35,28 +30,21 @@ void solve() {
     
     while (true) {
 
-        cout << "? " << x << ' ' << y;
-        fflush(stdout);
-
-        // string s;
-        // cin >> s;
-        // if (s == "e") exit(0);
-        // int ret = stoi(s);
-
-        int ret;
+        cout << "? " << x << ' ' << y << endl;
+        cout.flush();
+        
+        char ret;
         cin >> ret;
+        if (ret == 'e') exit(0);
 
-        if (ret == y) {
+        if (ret == 'y') {
             x = y;
             y = y * 2;
         }
         else {
-          cout << "! " << x;
-          fflush(stdout);
-          return;
             int ans = find(x, y);
-            cout << "! " << ans;
-            fflush(stdout);
+            cout << "! " << ans << endl;
+            cout.flush();
             return;
         }
     }
