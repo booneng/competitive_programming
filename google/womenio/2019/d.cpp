@@ -22,9 +22,6 @@ void solve() {
         s = res;
     }
 
-    string low;
-    string hi;
-
     int most = 0;
     for (auto it : cnts) {
         if (it.second > most || (it.second == most && order[it.first] > order[s])) {
@@ -33,8 +30,8 @@ void solve() {
         }
     }
 
-    low = s.substr(0, 5);
-    hi = s.substr(5);
+    string hi = s.substr(0, 5);
+    string low = s.substr(5);
     string random = "AAAAA";
     while (random == low || random == hi) {
         random[0]++;
