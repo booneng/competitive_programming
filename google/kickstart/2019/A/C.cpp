@@ -2,9 +2,13 @@
 
 using namespace std;
 
+const int Q = 30005;
+
+int ones[Q];
+
 class SegmentTree {
 	int n;
-	vector<int> tree;
+	vector<unordered_set<int>> tree;
 	vector<int> lo;
 	vector<int> hi;
 	vector<int> delta;
@@ -27,40 +31,46 @@ class SegmentTree {
         delta[i] = 0;
     }
 
-    void update(int i) {
-        tree[i] = tree[2 * i + 1] + delta[2 * i + 1] + tree[2 * i + 2] + delta[2 * i + 2];
-    }
-
-    void increment(int i, int left, int right, int val) {
+    void increment(int i, int left, int right, int val, int idx) {
         if (left > hi[i] || right < lo[i]) return;
 
         if (left <= lo[i] && right >= hi[i]) {
+            if (val == 1) tree[i].insert(idx);
+            else tree[i].erase(idx);
             delta[i] += val;
             return;
         }
 
         prop(i);
-        increment(2 * i + 1, left, right, val);
-        increment(2 * i + 2, left, right, val);
-        update(i);
+        increment(2 * i + 1, left, right, val, idx);
+        increment(2 * i + 2, left, right, val, idx);
     }
 
-    int CountOnes(int i, int left, int right) {
+    int CountOnes(int i, int left, int right, set<int> covers) {
         if (left > hi[i] || right < lo[i]) return 0;
 
         if (delta[i] > 1) return 0;
 
-        if (left <= lo[i] && right >= hi[i] && tree[i] + delta[i] == hi[i] - lo[i] + 1) {
-            return hi[i] - lo[i] + 1;
+        if (left <= lo[i] && right >= hi[i]) {
+            for (int c : tree[i]) {
+                covers.insert(c);
+            }
         }
 
-        if (lo[i] == hi[i]) return 0;
+        if (lo[i] == hi[i]) {
+            if (delta[i] == 1) {
+                for (int c : covers) {
+                    ones[c]++;
+                }
+                return 1;
+            }
+            return 0;
+        }
 
         prop(i);
         int cnt = 0;
-        cnt += CountOnes(2 * i + 1, left, right);
-        cnt += CountOnes(2 * i + 2, left, right);
-        update(i);
+        cnt += CountOnes(2 * i + 1, left, right, covers);
+        cnt += CountOnes(2 * i + 2, left, right, covers);
         return cnt;
     }
 
@@ -68,7 +78,7 @@ public:
 	
     SegmentTree(int n) {
         this->n = n;
-        tree = vector<int>(4 * n);
+        tree = vector<unordered_set<int>>(4 * n);
         lo = vector<int>(4 * n);
         hi = vector<int>(4 * n);
         delta = vector<int>(4 * n);
@@ -76,12 +86,13 @@ public:
         init(0, 1, n);
     }
 
-    void increment(int left, int right, int val) {
-        increment(0, left, right, val);
+    void increment(int left, int right, int val, int idx) {
+        increment(0, left, right, val, idx);
     }
 
     int CountOnes(int left, int right) {
-        return CountOnes(0, left, right);
+        set<int> covers;
+        return CountOnes(0, left, right, covers);
     }
 
 };
@@ -94,8 +105,11 @@ int solve() {
     vector<int> r(q);
     for (int i = 0; i < q; i++) {
         cin >> l[i] >> r[i];
-        st.increment(l[i], r[i], 1);
+        st.increment(l[i], r[i], 1, i);
+        ones[i] = 0;
     }
+
+    st.CountOnes(1, n);
 
     vector<bool> used(q, false);
     int ans = n;
@@ -104,7 +118,8 @@ int solve() {
         int m = -1;
         for (int j = 0; j < q; j++) {
             if (used[j]) continue;
-            int cur = st.CountOnes(l[j], r[j]);
+            // int cur = st.CountOnes(l[j], r[j]);
+            int cur = ones[j];
             if (cur > m) {
                 m = cur;
                 idx = j;
@@ -112,7 +127,8 @@ int solve() {
         }
         used[idx] = true;
         ans = min(ans, m);
-        st.increment(l[idx], r[idx], -1);
+        st.increment(l[idx], r[idx], -1, idx);
+        st.CountOnes(l[idx], r[idx]);
     }
     return ans;
 }
